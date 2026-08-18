@@ -1,0 +1,27 @@
+fastapi
+uvicorn[standard]
+pydantic
+pandas
+openpyxl
+
+# CockroachDB (pg wire protocol)
+psycopg[binary]
+psycopg-pool
+
+# AWS: S3, SQS, Bedrock, SageMaker, Textract
+boto3
+
+# Retrieval
+rank-bm25
+
+# Pipeline
+datasketch
+langgraph
+python-dotenv
+rapidfuzz
+httpx
+requests
+jinja2
+lxml
+reportlab
+pypdf

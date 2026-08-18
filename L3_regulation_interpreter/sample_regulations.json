@@ -1,0 +1,44 @@
+{
+  "documents": [
+    {
+      "document_id": "rbi-sample-kyc-001",
+      "title": "Sample RBI KYC Direction",
+      "regulator": "RBI",
+      "document_type": "master_direction",
+      "effective_date": "2025-01-01",
+      "url": "https://example.org/rbi-sample-kyc",
+      "tags": ["KYC", "AML", "UPI"],
+      "sections": [
+        {
+          "section_id": "cust-due-diligence",
+          "heading": "Customer Due Diligence",
+          "text": "Regulated entities must apply appropriate customer due diligence and risk-based monitoring for account opening and ongoing transactions.",
+          "clauses": [
+            "Accounts with incomplete or simplified KYC should be subject to additional monitoring and review.",
+            "Unusual transaction patterns must be examined in line with the institution's risk management controls."
+          ]
+        }
+      ]
+    },
+    {
+      "document_id": "rbi-sample-aml-002",
+      "title": "Sample RBI AML Monitoring Guidance",
+      "regulator": "RBI",
+      "document_type": "guideline",
+      "effective_date": "2025-01-01",
+      "url": "https://example.org/rbi-sample-aml",
+      "tags": ["AML", "monitoring", "RTGS", "NEFT"],
+      "sections": [
+        {
+          "section_id": "suspicious-patterns",
+          "heading": "Suspicious Transaction Monitoring",
+          "text": "Banks should identify transactions involving unusual velocity, unexpected transaction value, adverse media, or patterns inconsistent with customer profile.",
+          "clauses": [
+            "Previous suspicious reporting history should materially elevate the risk review threshold.",
+            "Linked accounts and repeated high-value fund flows require enhanced scrutiny."
+          ]
+        }
+      ]
+    }
+  ]
+}

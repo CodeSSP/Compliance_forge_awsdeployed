@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  POC reconstruction of FIU-IND TransactionBasedReport.xsd (TRF) for STR.
+  Structure faithful to the Reporting Format Guide v2.2 element tree
+  (Batch -> Report -> SuspicionDetails / Transaction / Branch / RelatedPersons).
+
+  NOT the production schema. The real TransactionBasedReport.xsd is gated behind
+  the FINnet Gateway login. Enumerations marked POC-PLACEHOLDER are NOT the real
+  FIU Lookup Master codes - those are deployment-defined and not in any public doc.
+  Swap this whole file for the real XSD once a FINnet login is available; the
+  serializer and validator code do not change.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <!-- ============ simple types / enumerations ============ -->
+
+  <xs:simpleType name="ReportTypeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="STR"/>
+      <xs:enumeration value="CTR"/>
+      <xs:enumeration value="NTR"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="BatchTypeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="N"/>   <!-- New -->
+      <xs:enumeration value="R"/>   <!-- Replacement -->
+      <xs:enumeration value="D"/>   <!-- Deletion -->
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- MonthOfReport: "NA" for STR, "01".."12" for monthly obligations -->
+  <xs:simpleType name="MonthOfReportEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NA"/>
+      <xs:enumeration value="01"/><xs:enumeration value="02"/><xs:enumeration value="03"/>
+      <xs:enumeration value="04"/><xs:enumeration value="05"/><xs:enumeration value="06"/>
+      <xs:enumeration value="07"/><xs:enumeration value="08"/><xs:enumeration value="09"/>
+      <xs:enumeration value="10"/><xs:enumeration value="11"/><xs:enumeration value="12"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- POC-PLACEHOLDER. Real channel codes come from FIU Lookup Master. -->
+  <xs:simpleType name="TransactionModeEnum_POC">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="UPI"/>
+      <xs:enumeration value="NEFT"/>
+      <xs:enumeration value="RTGS"/>
+      <xs:enumeration value="IMPS"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- POC-PLACEHOLDER. Real funds codes come from FIU Lookup Master. -->
+  <xs:simpleType name="FundsCodeEnum_POC">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="K"/>   <!-- placeholder: electronic/transfer -->
+      <xs:enumeration value="A"/>   <!-- placeholder: deposit -->
+      <xs:enumeration value="O"/>   <!-- placeholder: other -->
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- POC-PLACEHOLDER. Real suspicion indicator codes come from FIU Lookup Master. -->
+  <xs:simpleType name="SuspicionIndicatorEnum_POC">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="STRUCTURING"/>
+      <xs:enumeration value="SANCTIONS_MATCH"/>
+      <xs:enumeration value="NETWORK_FLOW"/>
+      <xs:enumeration value="ACCOUNT_RISK"/>
+      <xs:enumeration value="CROSS_BORDER_LRS"/>
+      <xs:enumeration value="GEO_ANOMALY"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PartyRoleEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SENDER"/>
+      <xs:enumeration value="RECEIVER"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DebitCreditEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="D"/>
+      <xs:enumeration value="C"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="DateYMD">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d{4}-\d{2}-\d{2}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- ============ reusable complex types ============ -->
+
+  <xs:complexType name="PersonType">
+    <xs:sequence>
+      <xs:element name="Role" type="PartyRoleEnum"/>
+      <xs:element name="Name" type="xs:string"/>
+      <xs:element name="PAN" type="xs:string" minOccurs="0"/>
+      <xs:element name="DOB" type="DateYMD" minOccurs="0"/>
+      <xs:element name="Address" type="xs:string" minOccurs="0"/>
+      <xs:element name="Phone" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ============ root: Batch ============ -->
+
+  <xs:element name="Batch">
+    <xs:complexType>
+      <xs:sequence>
+
+        <xs:element name="BatchHeader">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="DataStructureVersion" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="ReportType" type="ReportTypeEnum"/>
+
+        <xs:element name="ReportingEntity">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="EntityName" type="xs:string"/>
+              <xs:element name="EntityRefNum" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="PrincipalOfficer">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Name" type="xs:string"/>
+              <xs:element name="Email" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="BatchDetails">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="BatchNumber" type="xs:string"/>
+              <xs:element name="BatchDate" type="DateYMD"/>
+              <xs:element name="BatchType" type="BatchTypeEnum"/>
+              <xs:element name="MonthOfReport" type="MonthOfReportEnum"/>
+              <xs:element name="YearOfReport" type="xs:string"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <!-- one STR = one Report (batch can hold many; POC = 1) -->
+        <xs:element name="Report" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+
+              <xs:element name="ReportSerialNum" type="xs:string"/>
+              <xs:element name="MainPersonName" type="xs:string"/>
+
+              <xs:element name="SuspicionDetails">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="SuspicionType" type="SuspicionIndicatorEnum_POC"/>
+                    <xs:element name="GroundsOfSuspicion" type="xs:string"/>
+                    <xs:element name="RegulationCitation" type="xs:string" minOccurs="0"/>
+                    <xs:element name="DateOfSuspicion" type="DateYMD"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+
+              <xs:element name="Transaction" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="TransactionNumber" type="xs:string"/>
+                    <xs:element name="TransactionDate" type="DateYMD"/>
+                    <xs:element name="TransactionMode" type="TransactionModeEnum_POC"/>
+                    <xs:element name="DebitCredit" type="DebitCreditEnum"/>
+                    <xs:element name="Amount" type="xs:decimal"/>
+                    <xs:element name="Currency" type="xs:string"/>
+                    <xs:element name="FundsCode" type="FundsCodeEnum_POC"/>
+                    <xs:element name="CustomerDetails" type="PersonType"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+
+              <xs:element name="RelatedPersons" type="PersonType" minOccurs="0" maxOccurs="unbounded"/>
+
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

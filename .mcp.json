@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "cockroachdb-cloud": {
+      "type": "http",
+      "url": "https://mcp.cockroachlabs.cloud/mcp",
+      "description": "CockroachDB Cloud Managed MCP Server. Replace the URL with the exact snippet from Cloud Console -> your cluster -> Connect -> MCP. Read-only by default; write access requires explicit consent."
+    }
+  }
+}
