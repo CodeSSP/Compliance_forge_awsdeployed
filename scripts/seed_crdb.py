@@ -148,7 +148,7 @@ def main():
         except Exception as e:
             print(f"  {t:22} error: {e}")
 
-    print("\nNext: python scripts/migrate_chroma_to_crdb.py")
+    print("\nNext: python scripts/seed_regulatory_chunks.py")
 
 
 if __name__ == "__main__":

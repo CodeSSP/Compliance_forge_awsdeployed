@@ -87,7 +87,7 @@ cp .env.example .env
 ./scripts/provision_ccloud.sh                    # cluster + DB + user + DSN into .env
 cockroach sql --url "$CRDB_DSN" -f infra/schema.sql
 python scripts/seed_crdb.py                      # 2000 txns, 1662 accounts, 76k history legs
-python scripts/migrate_chroma_to_crdb.py         # 1445 chunks with their 768-dim vectors
+python scripts/seed_regulatory_chunks.py         # 1445 chunks with their 768-dim vectors
 python scripts/verify_parity.py --limit 200      # regression gate
 
 uvicorn api:app --reload --port 8000
@@ -167,7 +167,7 @@ cockroach sql --url "$CRDB_DSN" -f infra/schema.sql
 
 # Load the data
 python scripts/seed_crdb.py                # transactions, accounts, history, watchlist
-python scripts/migrate_chroma_to_crdb.py   # existing 768-dim corpus, no re-embedding
+python scripts/seed_regulatory_chunks.py   # 1445 chunks, 768-dim vectors, bundled seed file
 
 # Confirm the port did not change detector output
 python scripts/verify_parity.py --limit 200
@@ -238,7 +238,7 @@ and queue into `.env`. The CockroachDB cluster is provisioned outside Terraform.
 ```
 .
 ├── aws/                      # CockroachDB, S3, SQS, model gateway
-├── scripts/                  # Seed, migrate, parity-check
+├── scripts/                  # Seed, parity-check
 ├── L0_event_ingestion/       # CockroachDB → SQS publisher + receiver
 ├── L1_orchestrator/          # Case orchestration, MinHash/LSH, regulation hashing
 ├── L2_transaction_monitor/   # Six detectors (C1–C6) + weighted aggregation

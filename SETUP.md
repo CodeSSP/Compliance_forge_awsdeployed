@@ -97,12 +97,14 @@ EMBED_BACKEND=ollama
 
 ```bash
 python scripts/seed_crdb.py                  # ~2 min
-python scripts/migrate_chroma_to_crdb.py     # ~1 min, needs: pip install chromadb
+python scripts/seed_regulatory_chunks.py     # ~1 min, no extra deps
 ```
 
 **Working looks like:** seed reports roughly 2000 transactions, 1662 accounts,
-76k history legs, 104 watchlist rows. Migration reports **1445 chunks**. If the
-chunk count is 0, the `chroma_db/` folder didn't come across in the unzip.
+76k history legs, 104 watchlist rows. The regulatory seed reports **1445
+chunks**, read from the bundled `infra/regulatory_chunks_seed.jsonl.gz` — no
+ChromaDB involved. If the chunk count is 0, that file didn't come across in
+the unzip.
 
 ---
 

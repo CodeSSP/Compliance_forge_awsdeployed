@@ -102,8 +102,11 @@ uvicorn api:app --reload --port 8000
 cd regulatory-ui-react && npm install && npm run dev
 ```
 
-`chroma_db/` is kept in the repo only as the migration source. Delete it once
-`verify_parity.py` passes and the L3 citations match.
+`chroma_db/` was kept in the repo only as the migration source. Once
+`verify_parity.py` passed and the L3 citations matched, it was deleted —
+`scripts/export_regulatory_chunks.py` / `scripts/seed_regulatory_chunks.py`
+replaced `migrate_chroma_to_crdb.py`, so a fresh clone seeds `regulatory_chunks`
+straight from a CockroachDB-native export and never touches ChromaDB.
 
 ## Order of work, and why
 
