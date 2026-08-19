@@ -169,8 +169,29 @@ on camera.
 
 ## Step 7 — Managed MCP Server (required hackathon feature)
 
-Cloud Console → your cluster → **Connect** → **MCP** → copy the config snippet.
-Paste it over the placeholder in `.mcp.json`, then in the repo folder:
+The per-cluster **Connect** dialog only offers SQL-user credentials — there is
+no MCP tab there. MCP access is org-level, via a service account:
+
+```bash
+ccloud service-account create mcp-agent --description "Claude Code MCP access"
+ccloud role add <service-account-id> CLUSTER_ADMIN CLUSTER <cluster-id>
+ccloud service-account api-key create <service-account-id> mcp-key
+```
+
+The last command prints a secret **once** — it won't be shown again. Register
+it as a local (not project-scoped, so it never touches `.mcp.json` or git):
+
+```bash
+claude mcp add --transport http cockroachdb-cloud https://cockroachlabs.cloud/mcp \
+  --header "Authorization: Bearer <the-secret>" -s local
+```
+
+`.mcp.json`'s checked-in `cockroachdb-cloud` entry has no credentials by
+design — it's the public placeholder every clone starts from. Note the host:
+it's `cockroachlabs.cloud/mcp`, **not** `mcp.cockroachlabs.cloud` (that
+subdomain doesn't resolve).
+
+Verify with `claude mcp get cockroachdb-cloud` (expect `✓ Connected`), then:
 
 ```bash
 claude
